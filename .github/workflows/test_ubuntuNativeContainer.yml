@@ -56,4 +56,4 @@ jobs:
           cd /__w/flagtree/flagtree/python
           pip install pybind11
           git config --global url."https://x-access-token:$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/"
-          MAX_JOBS=32 python3.11 -m pip install . --no-build-isolation
+          MAX_JOBS=32 python3 -m pip install . --no-build-isolation
