@@ -57,5 +57,10 @@ jobs:
           pip install pybind11
           git config --global url."https://x-access-token:$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/"
           git config --global --add safe.directory /__w/flagtree/flagtree
+          cd /__w/flagtree/flagtree && \
+          git clone https://github.com/microsoft/triton-shared.git third_party/triton_shared && \
+          cd third_party/triton_shared && \
+          git checkout 380b87122c88af131530903a702d5318ec59bb33
+          cd /__w/flagtree/flagtree/python
           set -x
           MAX_JOBS=32 python3 -m pip install . --no-build-isolation --verbose
