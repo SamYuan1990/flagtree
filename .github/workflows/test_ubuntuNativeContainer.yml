@@ -54,4 +54,5 @@ jobs:
       - name: Run Auto Test Script in Container
         run: |
           cd /__w/flagtree/flagtree/python
+          pip install pybind11
           MAX_JOBS=32 python3.11 -m pip install . --no-build-isolation
