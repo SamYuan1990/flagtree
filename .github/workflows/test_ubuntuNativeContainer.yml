@@ -22,6 +22,7 @@ jobs:
           
           DEBIAN_FRONTEND=noninteractive apt-get install -y python3.11 python3-pip python3-venv ninja-build
           DEBIAN_FRONTEND=noninteractive apt-get install -y llvm-14-tools
+          DEBIAN_FRONTEND=noninteractive apt-get install -y pybind11-dev python3-dev python3-distutils
 
           wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
           dpkg -i cuda-keyring_1.1-1_all.deb
