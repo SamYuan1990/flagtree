@@ -30,6 +30,11 @@ jobs:
           DEBIAN_FRONTEND=noninteractive apt-get install -y cuda-drivers cuda-toolkit
           DEBIAN_FRONTEND=noninteractive apt-get install -y libnccl2 libnccl-dev
 
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
