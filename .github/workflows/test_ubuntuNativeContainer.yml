@@ -29,6 +29,7 @@ jobs:
           DEBIAN_FRONTEND=noninteractive apt-get update -y
           DEBIAN_FRONTEND=noninteractive apt-get install -y cuda-drivers cuda-toolkit
           DEBIAN_FRONTEND=noninteractive apt-get install -y libnccl2 libnccl-dev
+          DEBIAN_FRONTEND=noninteractive apt-get clean
 
       - name: Configure Git
         run: |
