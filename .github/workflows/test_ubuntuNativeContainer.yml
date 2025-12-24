@@ -1,0 +1,67 @@
+name: Run Container and Execute Tests ubuntu-native
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  #workflow_call:
+jobs:
+  test-in-ubuntu-container:
+    runs-on: ubuntu-latest
+    container:
+      image:  ubuntu:22.04
+
+    steps:
+      - name: Set up Install Dependencies
+        run: |
+          DEBIAN_FRONTEND=noninteractive apt-get update -y
+          DEBIAN_FRONTEND=noninteractive apt-get install -y git autotools-dev wget gcc g++ build-essential cmake libc6
+          
+          DEBIAN_FRONTEND=noninteractive apt-get install -y python3.11 python3-pip python3-venv ninja-build
+          DEBIAN_FRONTEND=noninteractive apt-get install -y llvm-14-tools llvm-dev
+          DEBIAN_FRONTEND=noninteractive apt-get install -y pybind11-dev python3.11-dev python3-distutils
+
+          wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
+          dpkg -i cuda-keyring_1.1-1_all.deb
+          DEBIAN_FRONTEND=noninteractive apt-get update -y
+          DEBIAN_FRONTEND=noninteractive apt-get install -y cuda-drivers cuda-toolkit
+          DEBIAN_FRONTEND=noninteractive apt-get install -y libnccl2 libnccl-dev
+          DEBIAN_FRONTEND=noninteractive apt-get clean
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          ssh-strict: true
+          ssh-user: git
+          persist-credentials: true
+          clean: true
+          sparse-checkout-cone-mode: true
+          fetch-tags: false
+          show-progress: true
+          lfs: false
+          submodules: true
+          set-safe-directory: true
+
+      - name: Run Auto Test Script in Container
+        run: |
+          cd /__w/flagtree/flagtree/python
+          pip install pybind11
+          git config --global url."https://x-access-token:$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/"
+          git config --global --add safe.directory /__w/flagtree/flagtree
+          cd /__w/flagtree/flagtree && \
+          git clone https://github.com/microsoft/triton-shared.git third_party/triton_shared && \
+          cd third_party/triton_shared && \
+          git checkout 380b87122c88af131530903a702d5318ec59bb33
+          cd /__w/flagtree/flagtree/python
+          set -x
+          MAX_JOBS=4 python3.11 -m pip install . --no-build-isolation --verbose
